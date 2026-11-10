@@ -31,7 +31,17 @@ async function load() {
   sel.onchange = () => showMonth(sel.value);
   if (sel.options.length) showMonth(sel.options[0].value);
   const p = await getDoc(doc(db, "announcements", "current"));
-  if (p.exists()) { LANGS.forEach(l => $("p_" + l).value = p.data().text?.[l] || ""); $("p_on").value = p.data().active ? "on" : "off"; }
+  if (p.exists()) {
+    const d=p.data(); const legacy=typeof d.text === "object" && d.text !== null;
+    $("p_message").value=typeof d.text === "string" ? d.text : "";
+    $("legacyPopupNote").hidden=!legacy; $("legacyPopupPreview").hidden=!legacy;
+    $("legacyPopupPreview").textContent=legacy ? LANGS.map(l=>l+": "+(d.text[l]||"")).join("\n\n") : "";
+    $("p_title").value=typeof d.title === "string" ? d.title : "";
+    $("p_url").value=typeof d.url === "string" ? d.url : "";
+    $("p_linkTitle").value=typeof d.linkTitle === "string" ? d.linkTitle : "";
+    $("p_on").value=d.active ? "on" : "off";
+  }
+
   say("Loaded " + Object.keys(months).length + " months.");
 }
 
@@ -213,9 +223,29 @@ $("publishMonth").onclick = async () => { const d = collect(), e = validateMonth
 $("publishMeta").onclick = async () => { const title = {}; LANGS.forEach(l => title[l] = $("t_" + l).value.trim()); const samvat = $("samvat").value.trim();
   if (!samvat || !title.en) { say("Not published. Samvat and English title are required."); return; }
   await setDoc(doc(db, "calendar", "meta"), { ...meta, title, samvat, updatedAt: serverTimestamp() }); meta = { ...meta, title, samvat }; say("Title and Samvat published."); };
-$("publishPopup").onclick = async () => { const text = {}; LANGS.forEach(l => text[l] = $("p_" + l).value.trim());
-  const active = $("p_on").value === "on"; if (active && !text.pa && !text.en) { say("Not published. Add text first."); return; }
-  await setDoc(doc(db, "announcements", "current"), { text, active, id: String(Date.now()), updatedAt: serverTimestamp() }); say(active ? "Popup is ON." : "Popup is OFF."); };
+function safePopupUrl(raw) {
+  const v=raw.trim(); if(!v)return "";
+  if(v.length>2048 || /[\x00-\x1f\x7f\\]/.test(v))throw Error("Invalid link URL");
+  let u;try{u=new URL(v)}catch{throw Error("Enter a full http or https web URL")}
+  const h=u.hostname.toLowerCase(), parts=h.split(".");
+  if(!["https:","http:"].includes(u.protocol)||u.username||u.password||!h.includes(".")||h==="localhost"||h.endsWith(".localhost")||h.endsWith(".local")||h.includes(":")||parts.every(x=>/^\d+$/.test(x))||(u.port && !["80","443"].includes(u.port)))throw Error("Use a public web URL without credentials or a local address");
+  return u.href;
+}
+function popupDraft(){
+ const d={title:$("p_title").value.trim(),text:$("p_message").value.trim(),url:safePopupUrl($("p_url").value),linkTitle:$("p_linkTitle").value.trim(),active:$("p_on").value==="on"};
+ if(d.title.length>120||d.text.length>2000||d.linkTitle.length>120)throw Error("Popup text is too long");
+ if(d.active && !d.text)throw Error("Write the replacement message first. Existing published content is unchanged.");
+ if(d.url && !d.linkTitle)throw Error("Add the link title users will tap");
+ if(!d.url)d.linkTitle="";return d;
+}
+$("previewPopup").onclick=()=>{try{const d=popupDraft();$("popupPreview").textContent=[d.title,d.text,d.url ? "Link: "+d.linkTitle : "No link",d.active ? "On" : "Off"].filter(Boolean).join("\n\n");$("popupPreview").focus();say("Popup draft preview only, not published.")}catch(e){say("Not published. "+e.message)}};
+$("publishPopup").onclick=async()=>{try{
+ const d=popupDraft();
+ if(!confirm("Publish this popup for app users? Review the title, message and optional link first."))return;
+ // Off without replacement text preserves the current owner message and ID.
+ if(!d.active && !d.text){await setDoc(doc(db,"announcements","current"),{active:false,updatedAt:serverTimestamp()},{merge:true});say("Popup is OFF. Existing text is preserved.");return;}
+ await setDoc(doc(db,"announcements","current"),{...d,id:String(Date.now()),updatedAt:serverTimestamp()});say(d.active?"Popup published. App reads it on its next fresh start.":"Popup is OFF.");
+}catch(e){say("Not published. "+e.message)}};
 
 $("validateImport").onclick = async () => { try { const f = $("importFile").files[0]; const j = JSON.parse(await f.text());
   const e = []; if (!Array.isArray(j.months) || !j.months.length) e.push("months missing"); if (!j.samvat) e.push("samvat missing"); if (!j.title) e.push("title missing");
