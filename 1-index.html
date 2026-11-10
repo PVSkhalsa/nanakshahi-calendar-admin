@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nanakshahi Calendar admin</title>
+<style>
+ body{font:18px/1.5 system-ui,sans-serif;max-width:46rem;margin:0 auto;padding:1rem;color:#111;background:#fff}
+ h1,h2{line-height:1.25} label{display:block;margin-top:.8rem;font-weight:600}
+ input,textarea,select,button{font:inherit;padding:.5rem;margin-top:.25rem;width:100%;box-sizing:border-box;border:2px solid #333;border-radius:6px}
+ button{background:#1b4b8f;color:#fff;border-color:#1b4b8f;cursor:pointer;margin-top:.6rem}
+ button.danger{background:#a11;border-color:#a11} button.secondary{background:#fff;color:#1b4b8f}
+ fieldset{margin-top:1rem;border:2px solid #666;border-radius:6px} :focus-visible{outline:4px solid #f90;outline-offset:2px}
+ #status{position:sticky;top:0;background:#ffe;padding:.5rem;border:2px solid #aa0;margin:.5rem 0}
+ .warn{background:#fee;border:2px solid #a11;padding:.5rem}
+</style>
+</head>
+<body>
+<h1>Nanakshahi Calendar admin</h1>
+<p id="status" role="status" aria-live="polite">Not signed in.</p>
+
+<section id="authBox">
+ <button id="signIn">Sign in with Google (owner only)</button>
+ <button id="signOut" class="secondary" hidden>Sign out</button>
+</section>
+
+<main id="app" hidden>
+ <h2>1. Calendar title and Samvat</h2>
+ <p>Edits stay in this page until you press Publish. Nothing changes in the app before that.</p>
+ <fieldset><legend>Samvat text (shown at the top of the app)</legend>
+  <label for="samvat">Samvat text</label><input id="samvat" lang="pa">
+ </fieldset>
+ <fieldset><legend>Calendar title</legend>
+  <label for="t_pa">Punjabi title</label><input id="t_pa" lang="pa">
+  <label for="t_hi">Hindi title</label><input id="t_hi" lang="hi">
+  <label for="t_en">English title</label><input id="t_en" lang="en">
+ </fieldset>
+ <button id="publishMeta">Publish title and Samvat</button>
+
+ <h2>2. Month entries</h2>
+ <label for="monthSel">Month</label><select id="monthSel"></select>
+ <fieldset><legend>Month name and Sangrand</legend>
+  <label for="mt_pa">Month name, Punjabi</label><input id="mt_pa" lang="pa">
+  <label for="mt_hi">Month name, Hindi</label><input id="mt_hi" lang="hi">
+  <label for="mt_en">Month name, English</label><input id="mt_en" lang="en">
+  <label for="sg_pa">Sangrand, Punjabi</label><input id="sg_pa" lang="pa">
+  <label for="sg_hi">Sangrand, Hindi</label><input id="sg_hi" lang="hi">
+  <label for="sg_en">Sangrand, English</label><input id="sg_en" lang="en">
+ </fieldset>
+ <h3>Entries in this month</h3>
+ <div id="events"></div>
+ <button id="addEvent" class="secondary">Add a new entry</button>
+ <button id="previewMonth" class="secondary">Preview this month</button>
+ <pre id="preview" aria-live="polite" tabindex="0"></pre>
+ <button id="publishMonth">Publish this month</button>
+
+ <h2>3. Popup message for app users</h2>
+ <fieldset><legend>Popup shown when the app opens</legend>
+  <label for="p_pa">Punjabi text</label><textarea id="p_pa" lang="pa" rows="3"></textarea>
+  <label for="p_hi">Hindi text</label><textarea id="p_hi" lang="hi" rows="3"></textarea>
+  <label for="p_en">English text</label><textarea id="p_en" lang="en" rows="3"></textarea>
+  <label for="p_on">Show this popup</label><select id="p_on"><option value="off">Off</option><option value="on">On</option></select>
+ </fieldset>
+ <button id="publishPopup">Publish popup</button>
+
+ <h2>4. Import a full year (JSON) and remove an old year</h2>
+ <label for="importFile">JSON file in the same format as the app data</label><input id="importFile" type="file" accept="application/json,.json">
+ <button id="validateImport" class="secondary">Check the file</button>
+ <button id="publishImport">Publish the checked file as the new year</button>
+ <p class="warn">Publishing a new year first writes and re-reads the new data. Only then are older months that are not in the new file removed.</p>
+ <button id="exportAll" class="secondary">Download a backup of all published data</button>
+
+ <h2>5. System notifications</h2>
+ <p class="warn">Sending a push notification to all phones is not done from this page. It needs a server key that must not live in a web page. Use Firebase console &gt; Messaging for now.</p>
+</main>
+<script type="module" src="admin.js"></script>
+</body>
+</html>

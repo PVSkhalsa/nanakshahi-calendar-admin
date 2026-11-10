@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == 'paramveersinghkhalsa2003@gmail.com';
+    }
+    match /calendar/{doc=**} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+    match /announcements/{doc=**} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+    match /admin/{doc=**} {
+      allow read, write: if isOwner();
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
