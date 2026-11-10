@@ -1,8 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Nanakshahi Calendar admin</title>
 <style>
  body{font:18px/1.5 system-ui,sans-serif;max-width:46rem;margin:0 auto;padding:1rem;color:#111;background:#fff}
@@ -14,73 +15,68 @@
  #status{position:sticky;top:0;background:#ffe;padding:.5rem;border:2px solid #aa0;margin:.5rem 0}
  .warn{background:#fee;border:2px solid #a11;padding:.5rem}
 </style>
-</head>
+<style>
+body{max-width:56rem;background:#f4f6fa;color:#182336;padding:1.2rem}h1{color:#163d6a}#authBox,#sectionChoices,main>section{background:white;border:1px solid #c3cedb;border-radius:12px;padding:1rem;margin:1rem 0}#sectionChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem}#sectionChoices button{margin:0;min-height:3.5rem}#sectionChoices button[aria-expanded="true"]{background:#17324f;border-color:#17324f}main>section h2:first-child{margin-top:0}main>section h2:focus{outline:3px solid #ef9c18;outline-offset:5px}[hidden]{display:none!important}pre{white-space:pre-wrap;overflow-wrap:anywhere}button{min-height:44px}#status{position:static;border-color:#c5a64d;background:#fff9df} @media(max-width:600px){#sectionChoices{grid-template-columns:1fr}body{padding:.75rem}}
+</style></head>
 <body>
 <h1>Nanakshahi Calendar admin</h1>
-<p id="status" role="status" aria-live="polite">Not signed in.</p>
-
+<p aria-live="polite" id="status" role="status">Not signed in.</p>
 <section id="authBox">
- <button id="signIn">Sign in with Google (owner only)</button>
- <button id="signOut" class="secondary" hidden>Sign out</button>
+<button id="signIn">Sign in with Google (owner only)</button>
+<button class="secondary" hidden="" id="signOut">Sign out</button>
 </section>
-
-<main id="app" hidden>
- <h2>0. Import dates from a PDF or TXT file</h2>
- <p>Only lines with a clear date and text are read, for example: 19 March: Name of the day. Lines that are not clear are listed and left out. Nothing is published from here.</p>
- <label for="docFile">PDF or TXT file</label><input type="file" id="docFile" accept=".pdf,.txt,text/plain,application/pdf">
- <label for="docLang">Language of the text in the file</label><select id="docLang"><option value="pa">Punjabi</option><option value="hi">Hindi</option><option value="en">English</option></select>
- <button id="readDoc" type="button">Read the file and show what was understood</button>
- <pre id="docPreview" aria-live="polite"></pre>
- <button id="applyDoc" type="button" class="secondary">Add the understood entries to the month editors (not published)</button>
- <h2>1. Calendar title and Samvat</h2>
- <p>Edits stay in this page until you press Publish. Nothing changes in the app before that.</p>
- <fieldset><legend>Samvat text (shown at the top of the app)</legend>
-  <label for="samvat">Samvat text</label><input id="samvat" lang="pa">
- </fieldset>
- <fieldset><legend>Calendar title</legend>
-  <label for="t_pa">Punjabi title</label><input id="t_pa" lang="pa">
-  <label for="t_hi">Hindi title</label><input id="t_hi" lang="hi">
-  <label for="t_en">English title</label><input id="t_en" lang="en">
- </fieldset>
- <button id="publishMeta">Publish title and Samvat</button>
-
- <h2>2. Month entries</h2>
- <label for="monthSel">Month</label><select id="monthSel"></select>
- <fieldset><legend>Month name and Sangrand</legend>
-  <label for="mt_pa">Month name, Punjabi</label><input id="mt_pa" lang="pa">
-  <label for="mt_hi">Month name, Hindi</label><input id="mt_hi" lang="hi">
-  <label for="mt_en">Month name, English</label><input id="mt_en" lang="en">
-  <label for="sg_pa">Sangrand, Punjabi</label><input id="sg_pa" lang="pa">
-  <label for="sg_hi">Sangrand, Hindi</label><input id="sg_hi" lang="hi">
-  <label for="sg_en">Sangrand, English</label><input id="sg_en" lang="en">
- </fieldset>
- <label for="entrySel">Date entry in this month (shows one at a time)</label>
- <select id="entrySel"></select>
- <div id="events"></div>
- <button id="addEvent" class="secondary">Add a new date entry to this month</button>
- <button id="previewMonth" class="secondary">Preview this month</button>
- <pre id="preview" aria-live="polite" tabindex="0"></pre>
- <button id="publishMonth">Publish this month</button>
-
- <h2>3. Popup message for app users</h2>
- <fieldset><legend>Popup shown when the app opens</legend>
-  <label for="p_pa">Punjabi text</label><textarea id="p_pa" lang="pa" rows="3"></textarea>
-  <label for="p_hi">Hindi text</label><textarea id="p_hi" lang="hi" rows="3"></textarea>
-  <label for="p_en">English text</label><textarea id="p_en" lang="en" rows="3"></textarea>
-  <label for="p_on">Show this popup</label><select id="p_on"><option value="off">Off</option><option value="on">On</option></select>
- </fieldset>
- <button id="publishPopup">Publish popup</button>
-
- <h2>4. Import a full year (JSON) and remove an old year</h2>
- <label for="importFile">JSON file in the same format as the app data</label><input id="importFile" type="file" accept="application/json,.json">
- <button id="validateImport" class="secondary">Check the file</button>
- <button id="publishImport">Publish the checked file as the new year</button>
- <p class="warn">Publishing a new year first writes and re-reads the new data. Only then are older months that are not in the new file removed.</p>
- <button id="exportAll" class="secondary">Download a backup of all published data</button>
-
- <h2>5. System notifications</h2>
- <p class="warn">Sending a push notification to all phones is not done from this page. It needs a server key that must not live in a web page. Use Firebase console &gt; Messaging for now.</p>
-</main>
-<script type="module" src="admin3.js"></script>
-</body>
+<main hidden="" id="app"><nav aria-label="Admin sections" id="sectionChoices"><button aria-controls="panel-push" aria-expanded="false" id="choose-push" type="button">Push notification</button><button aria-controls="panel-popup" aria-expanded="false" id="choose-popup" type="button">Popup notification</button><button aria-controls="panel-calendar" aria-expanded="false" id="choose-calendar" type="button">Calendar</button></nav><section aria-labelledby="heading-push" hidden="" id="panel-push"><h2 id="heading-push" tabindex="-1">Push notification</h2><p class="warn" role="note">Push sending is not connected yet. No notification will be sent from this panel. Secure free-only sender setup and phone integration are still being prepared.</p></section><section aria-labelledby="heading-popup" hidden="" id="panel-popup"><h2 id="heading-popup" tabindex="-1">Popup notification</h2><p>Publish a popup for the app to fetch when it next starts. Turning it off prevents future fetches from showing it; it does not erase a message already read or instantly close an open popup.</p>
+<fieldset><legend>Popup shown when the app opens</legend>
+<label for="p_pa">Punjabi text</label><textarea id="p_pa" lang="pa" rows="3"></textarea>
+<label for="p_hi">Hindi text</label><textarea id="p_hi" lang="hi" rows="3"></textarea>
+<label for="p_en">English text</label><textarea id="p_en" lang="en" rows="3"></textarea>
+<label for="p_on">Show this popup</label><select id="p_on"><option value="off">Off</option><option value="on">On</option></select>
+</fieldset>
+<button id="publishPopup">Publish popup</button>
+</section><section aria-labelledby="heading-calendar" hidden="" id="panel-calendar"><h2 id="heading-calendar" tabindex="-1">Calendar</h2><h2>0. Import dates from a PDF or TXT file</h2>
+<p>Only lines with a clear date and text are read, for example: 19 March: Name of the day. Lines that are not clear are listed and left out. Nothing is published from here.</p>
+<label for="docFile">PDF or TXT file</label><input accept=".pdf,.txt,text/plain,application/pdf" id="docFile" type="file"/>
+<label for="docLang">Language of the text in the file</label><select id="docLang"><option value="pa">Punjabi</option><option value="hi">Hindi</option><option value="en">English</option></select>
+<button id="readDoc" type="button">Read the file and show what was understood</button>
+<pre aria-live="polite" id="docPreview"></pre>
+<button class="secondary" id="applyDoc" type="button">Add the understood entries to the month editors (not published)</button>
+<h2>1. Calendar title and Samvat</h2>
+<p>Edits stay in this page until you press Publish. Nothing changes in the app before that.</p>
+<fieldset><legend>Samvat text (shown at the top of the app)</legend>
+<label for="samvat">Samvat text</label><input id="samvat" lang="pa"/>
+</fieldset>
+<fieldset><legend>Calendar title</legend>
+<label for="t_pa">Punjabi title</label><input id="t_pa" lang="pa"/>
+<label for="t_hi">Hindi title</label><input id="t_hi" lang="hi"/>
+<label for="t_en">English title</label><input id="t_en" lang="en"/>
+</fieldset>
+<button id="publishMeta">Publish title and Samvat</button>
+<h2>2. Month entries</h2>
+<label for="monthSel">Month</label><select id="monthSel"></select>
+<fieldset><legend>Month name and Sangrand</legend>
+<label for="mt_pa">Month name, Punjabi</label><input id="mt_pa" lang="pa"/>
+<label for="mt_hi">Month name, Hindi</label><input id="mt_hi" lang="hi"/>
+<label for="mt_en">Month name, English</label><input id="mt_en" lang="en"/>
+<label for="sg_pa">Sangrand, Punjabi</label><input id="sg_pa" lang="pa"/>
+<label for="sg_hi">Sangrand, Hindi</label><input id="sg_hi" lang="hi"/>
+<label for="sg_en">Sangrand, English</label><input id="sg_en" lang="en"/>
+</fieldset>
+<label for="entrySel">Date entry in this month (shows one at a time)</label>
+<select id="entrySel"></select>
+<div id="events"></div>
+<button class="secondary" id="addEvent">Add a new date entry to this month</button>
+<button class="secondary" id="previewMonth">Preview this month</button>
+<pre aria-live="polite" id="preview" tabindex="0"></pre>
+<button id="publishMonth">Publish this month</button>
+<h2>4. Import a full year (JSON) and remove an old year</h2>
+<label for="importFile">JSON file in the same format as the app data</label><input accept="application/json,.json" id="importFile" type="file"/>
+<button class="secondary" id="validateImport">Check the file</button>
+<button id="publishImport">Publish the checked file as the new year</button>
+<p class="warn">Publishing a new year first writes and re-reads the new data. Only then are older months that are not in the new file removed.</p>
+<button class="secondary" id="exportAll">Download a backup of all published data</button>
+</section></main>
+<script src="admin3.js" type="module"></script>
+<script>
+(()=>{const names=['push','popup','calendar'];function closePanels(){names.forEach(n=>{document.getElementById('panel-'+n).hidden=true;document.getElementById('choose-'+n).setAttribute('aria-expanded','false')})}names.forEach(n=>document.getElementById('choose-'+n).addEventListener('click',()=>{closePanels();document.getElementById('panel-'+n).hidden=false;document.getElementById('choose-'+n).setAttribute('aria-expanded','true');document.getElementById('heading-'+n).focus()}));new MutationObserver(()=>{if(document.getElementById('app').hidden)closePanels()}).observe(document.getElementById('app'),{attributes:true,attributeFilter:['hidden']});closePanels()})();
+</script></body>
 </html>
