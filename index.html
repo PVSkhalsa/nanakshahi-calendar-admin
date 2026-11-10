@@ -25,14 +25,16 @@ body{max-width:56rem;background:#f4f6fa;color:#182336;padding:1.2rem}h1{color:#1
 <button id="signIn">Sign in with Google (owner only)</button>
 <button class="secondary" hidden="" id="signOut">Sign out</button>
 </section>
-<main hidden="" id="app"><nav aria-label="Admin sections" id="sectionChoices"><button aria-controls="panel-push" aria-expanded="false" id="choose-push" type="button">Push notification</button><button aria-controls="panel-popup" aria-expanded="false" id="choose-popup" type="button">Popup notification</button><button aria-controls="panel-calendar" aria-expanded="false" id="choose-calendar" type="button">Calendar</button></nav><section aria-labelledby="heading-push" hidden="" id="panel-push"><h2 id="heading-push" tabindex="-1">Push notification</h2><p class="warn" role="note">Push sending is not connected yet. No notification will be sent from this panel. Secure free-only sender setup and phone integration are still being prepared.</p></section><section aria-labelledby="heading-popup" hidden="" id="panel-popup"><h2 id="heading-popup" tabindex="-1">Popup notification</h2><p>Publish a popup for the app to fetch when it next starts. Turning it off prevents future fetches from showing it; it does not erase a message already read or instantly close an open popup.</p>
-<fieldset><legend>Popup shown when the app opens</legend>
-<label for="p_pa">Punjabi text</label><textarea id="p_pa" lang="pa" rows="3"></textarea>
-<label for="p_hi">Hindi text</label><textarea id="p_hi" lang="hi" rows="3"></textarea>
-<label for="p_en">English text</label><textarea id="p_en" lang="en" rows="3"></textarea>
+<main hidden="" id="app"><nav aria-label="Admin sections" id="sectionChoices"><button aria-controls="panel-push" aria-expanded="false" id="choose-push" type="button">Push notification</button><button aria-controls="panel-popup" aria-expanded="false" id="choose-popup" type="button">Popup notification</button><button aria-controls="panel-calendar" aria-expanded="false" id="choose-calendar" type="button">Calendar</button></nav><section aria-labelledby="heading-push" hidden="" id="panel-push"><h2 id="heading-push" tabindex="-1">Push notification</h2><p class="warn" role="note">Push sending is not connected yet. No notification will be sent from this panel. Secure free-only sender setup and phone integration are still being prepared.</p></section><section aria-labelledby="heading-popup" hidden="" id="panel-popup"><h2 id="heading-popup" tabindex="-1">Popup notification</h2><p>Write one popup message. Every user sees this same full text, regardless of the app language. You may write multiple languages in the same box.</p>
+<p class="warn" hidden="" id="legacyPopupNote">The published popup uses the older language-box format. It is preserved below for reference. Nothing changes until you write and publish a replacement message.</p><pre hidden="" id="legacyPopupPreview"></pre>
+<label for="p_title">Popup title</label><input id="p_title" maxlength="120"/>
+<label for="p_message">Popup message (same full text for everyone)</label><textarea id="p_message" maxlength="2000" rows="6"></textarea>
+<label for="p_url">Optional link URL (not shown to app users)</label><input id="p_url" inputmode="url" maxlength="2048" placeholder="https://example.org/" type="url"/>
+<label for="p_linkTitle">Link title shown in the popup (required only when a URL is supplied)</label><input id="p_linkTitle" maxlength="120"/>
 <label for="p_on">Show this popup</label><select id="p_on"><option value="off">Off</option><option value="on">On</option></select>
-</fieldset>
-<button id="publishPopup">Publish popup</button>
+<p>Popup order: title, message, optional named link, then OK. Opening a link requires a tap. Turning a popup off affects future fetches, not a message already read or currently open.</p>
+<button class="secondary" id="previewPopup" type="button">Preview popup draft</button><pre aria-live="polite" id="popupPreview" tabindex="0"></pre>
+<button id="publishPopup" type="button">Publish popup</button>
 </section><section aria-labelledby="heading-calendar" hidden="" id="panel-calendar"><h2 id="heading-calendar" tabindex="-1">Calendar</h2><h2>0. Import dates from a PDF or TXT file</h2>
 <p>Only lines with a clear date and text are read, for example: 19 March: Name of the day. Lines that are not clear are listed and left out. Nothing is published from here.</p>
 <label for="docFile">PDF or TXT file</label><input accept=".pdf,.txt,text/plain,application/pdf" id="docFile" type="file"/>
