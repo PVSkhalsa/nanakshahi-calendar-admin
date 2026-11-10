@@ -42,6 +42,19 @@ async function load() {
     $("p_on").value=d.active ? "on" : "off";
   }
 
+  const snapshot=$("publishedCalendarContent");
+  if(snapshot){
+    snapshot.replaceChildren();
+    const text=(tag,value)=>{const e=document.createElement(tag);e.textContent=value;snapshot.append(e);return e};
+    text("h3","Published calendar title and Samvat");
+    LANGS.forEach(l=>text("p",l+": "+(meta.title?.[l]||"")));
+    text("p","Samvat: "+(typeof meta.samvat==="string"?meta.samvat:JSON.stringify(meta.samvat||"")));
+    if(meta.dedication)LANGS.forEach(l=>text("p",l+" dedication: "+(meta.dedication[l]||"")));
+    Object.values(months).sort((a,b)=>(a.order??0)-(b.order??0)).forEach(d=>{
+      text("h3",d.title?.en||d.title?.pa||"Month");
+      LANGS.forEach(l=>{text("h4",({pa:"Punjabi",hi:"Hindi",en:"English"})[l]);text("p","Month: "+(d.title?.[l]||"")+". Sangrand: "+(d.sangrand?.[l]||""));const ul=document.createElement("ul");(d.events?.[l]||[]).forEach(v=>{const li=document.createElement("li");li.textContent=v;ul.append(li)});snapshot.append(ul)})
+    });
+  }
   say("Loaded " + Object.keys(months).length + " months.");
 }
 
