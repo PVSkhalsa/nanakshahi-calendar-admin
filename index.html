@@ -77,7 +77,7 @@ body{max-width:56rem;background:#f4f6fa;color:#182336;padding:1.2rem}h1{color:#1
 <p class="warn">Publishing a new year first writes and re-reads the new data. Only then are older months that are not in the new file removed.</p>
 <button class="secondary" id="exportAll">Download a backup of all published data</button>
 </section></main>
-<script src="admin3.js" type="module"></script>
+<script src="admin3.js?v=single-popup-v6" type="module"></script>
 <script>
 (()=>{const names=['push','popup','calendar'];function closePanels(){names.forEach(n=>{document.getElementById('panel-'+n).hidden=true;document.getElementById('choose-'+n).setAttribute('aria-expanded','false')})}names.forEach(n=>document.getElementById('choose-'+n).addEventListener('click',()=>{closePanels();document.getElementById('panel-'+n).hidden=false;document.getElementById('choose-'+n).setAttribute('aria-expanded','true');document.getElementById('heading-'+n).focus()}));new MutationObserver(()=>{if(document.getElementById('app').hidden)closePanels()}).observe(document.getElementById('app'),{attributes:true,attributeFilter:['hidden']});closePanels()})();
 </script></body>
